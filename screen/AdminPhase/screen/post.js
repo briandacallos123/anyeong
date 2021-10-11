@@ -27,23 +27,11 @@ const Post = () => {
                 setData(prev => {
                         return [...prev, ...dataArray]
                  })
-                // console.log("Type niya: ", change.type)
-                // console.log("Data to", change.doc.data());
+               
             })
-            //
-            
-            // changes.forEach(doc => {
-            //    
-            // })
-            
-            // 
+          
         })
-        // firebase.firestore().collection('post').get()
-        // .then(res => {
-        //     const dataArray = []
-           
-        //     
-        // })
+      
     }
 
     return (

@@ -20,17 +20,19 @@ const Header = () => {
             flexDirection:'row',
             justifyContent:'center',
             position:'relative',
-            top:12,
+            top:8,
+            
           
            
         }}>
             <View style={styles.subContainer}>
-                <View style={{alignItems:'center'}}>
+               
                     <Text style={styles.logo}>
                         CMU NOW
                     </Text>
-                    <View style={styles.line}></View>
-                </View>
+                   
+               
+                <View style={styles.line}></View>
                 <Image
                 source={logo}
                 style={styles.img}
@@ -48,21 +50,21 @@ const styles = StyleSheet.create({
     subContainer:{
         flexDirection:'row',
         alignItems:'center',
-        borderRadius:20,
+        // borderRadius:20,
         
     },
     img:{
         height:140,
         width:85,
         position:'relative',
-        top:5
+        top:5,
     },
     
     logo:{
         color:'#012362',
         fontSize:32,
         fontWeight:'bold',
-        marginRight:5,
+        marginRight:10,
         textShadowColor:'#DDD7D7',
         textShadowOffset:{
             width:2,
@@ -72,9 +74,10 @@ const styles = StyleSheet.create({
        
     },
     line:{
-        height:2,
-        width:130,
-        backgroundColor:'#012362'
+        height:60,
+        width:2,
+        backgroundColor:'#012362',
+        marginRight:5
     }
 
 })

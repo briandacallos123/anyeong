@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import { Alert, Button, StyleSheet, Text, View, FlatList } from 'react-native'
 import firebase from 'firebase'
-import Post from './post';
-import Header from './Header';
+import Post from '../post';
+import Header from '../../Parts/header'
 
-function Main(){
+function NewsUpdates(){
     const [data, setData] = useState([]);
     
     useEffect(()=>{
         fetchPostData()
         
     },[])
-
+    
     const fetchPostData = ()=>{
         firebase.firestore().collection('post').get()
         .then(res => {
@@ -25,6 +25,7 @@ function Main(){
             setData(prev => {
                 return [...prev, ...dataArray]
             })
+           
           
             
         })
@@ -36,14 +37,18 @@ function Main(){
    
     return(
         <View style={styles.container}>
-             <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+             <View style={styles.innerContainer}>
                     {/* header */}
                     <Header/>
-                    <View>
-                      {data.map((item) => {
-                         
-                          return <Post key={item.id} data={item}/>
-                      })}
+                    <View style={styles.itemContainer}>
+                    
+                       <FlatList
+                            data={data}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({item}) => {
+                                return <Post  data={item}/>
+                            }}
+                      /> 
                       
                     </View>
              </View>
@@ -51,13 +56,24 @@ function Main(){
     )
     
 }
-export default Main
+export default NewsUpdates
 
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        padding:20
+        padding:20,
+        // backgroundColor:'white'
+    },
+    innerContainer:{
+        flex:1,
+        // alignItems:'center',
+        // justifyContent:'center',
+        
+    },
+    itemContainer:{
+        flex:1
     }
+   
 })
 
 

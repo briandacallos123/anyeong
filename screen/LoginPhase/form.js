@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, TextInput, Button, Alert} from 'react-native'
-import { auth } from '../../config';
+import { StyleSheet, Text, View, TextInput,Modal, TouchableHighlight, Alert, TouchableOpacity} from 'react-native'
+// import { auth } from '../../config';
 import firebase from 'firebase';
-import MainPhase from './../Mainphase/Index'
+import {auth, firestore} from '../../firebase'
+
+import ItoDapat from '../Mainphase/ItoDapat'
 import Header from '../Parts/header';
 import Footer from '../Parts/footer';
 import SocialIcon from '../Parts/SocialIcon';
@@ -11,105 +13,143 @@ import { Dimensions } from 'react-native'
 
 
 const Form = ({props, dataz}) => {
-    const [height, setHeight] = React.useState(0);
+    const [height, setHeight] = useState(0);
     const navigation = props
     const data = dataz
-    
-    React.useEffect(()=>{
-        const haytz = Math.round(Dimensions.get('window').height)
-        setHeight(haytz)
-        console.log(haytz);
-      }, [])
-
+    const [isAdmin, setAdmin] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [myData, setMyData] = useState([]);
     const [info, setInfo] = useState({
         email:"",
         password:""
     })
+    const settingAdmin = () => {
+        setModalVisible(true);
+        setAdmin(!isAdmin)
+    }
     
     
+    React.useEffect(()=>{
+        const haytz = Math.round(Dimensions.get('window').height)
+        setHeight(haytz)
+       
+      }, [])
 
+   
+    // modal
+      const MyModal = () => {
+        return(
+            <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+              }}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  {isAdmin ? <Text style={styles.modalText}>You're trying to login as an Admin.</Text>:<Text style={styles.modalText}>You're trying to login as a User</Text>}
+      
+                  <TouchableHighlight
+                    style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                    }}>
+                    <Text style={styles.textStyle}>Ok</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            </Modal>
+      
+            
+          </View>
+        )
+      }
+
+     
     const login = () => {
-        
-        if(data){
-            console.log("It's true");
-            if(info.email && info.password){
-                firebase.auth().signInWithEmailAndPassword(info.email, info.password)
-                .then((response)=>{
-                    console.log("Admin nila log in nya pero check muna if nasa firestore yung data");
-                    // navigation.navigate("Main")
-                    const uid = response.user.uid
-                    const email = response.user.email
-                    console.log("Email niya: ", email)
-    
-                    // search admin credentials in firestore
-                    firebase.firestore().collection("admin").where("email", '==', email).get()
-                    .then(res => {
-                        res.forEach((err) => {
-                           navigation.navigate("AdminPanel")
-                        })
-                    })
-                    .catch((e) => Alert.alert("Hindi siya admin!")) 
-                   
-                })
-                .catch(e => {
-                    Alert.alert(e.message)
-                })
-            }
-        }else{
-        console.log("It's false")
-           if(info.email && info.password){
-            firebase.auth().signInWithEmailAndPassword(info.email, info.password)
+        if(info.email && info.password){
+            auth.signInWithEmailAndPassword(info.email, info.password)
             .then((response)=>{
+                if(isAdmin){
+                
                 // navigation.navigate("Main")
-                const newData = {
-                     id : response.user.uid,
-                     emil :response.user.email
+                const uid = response.user.uid
+                const email = response.user.email
+                // search admin credentials in firestore
+                firestore.collection("admin").where("email", '==', email).get()
+                .then(res => {
+                    res.forEach((err) => {
+                        Alert.alert("Welcome Admin")
+                        navigation.navigate('AdminPanel')
+                        
+                    })
+                })
+               
+                }else{
+                   firestore.collection("users").where("email", '==', info.email).get()
+                    .then(res => {
+                        const myData = []
+                        res.forEach(doc => {
+                            
+                            myData.push(doc.data());
+                        })
+                        navigation.navigate('ItoDapat',{
+                            screen:'Profile',
+                            params:myData
+                        })
+                        
+                    }).catch(e => console.log("error ulit: ", e.message))
+
+                   
                 }
-                console.log("Hindi siya admin");
-                navigation.navigate("Profile",newData)
+               
             })
             .catch(e => {
                 Alert.alert(e.message)
             })
         }
-        }
+        
     }
+    
     const register = () => {
         navigation.navigate("Register")
     }
-    // backgroundColor:'#E4E4E4',
-    // height:height
+  
     return (
         <View style={{
-              backgroundColor:'#E4E4E4',
+              backgroundColor:'white',
                 height:height,
                 padding:20,
+                
                 
             }}>
                 <View style={{
                     flex:1,
                     justifyContent:'center'
                 }}>
-                        {/* header */}
+                {/* header */}
                 <Header/>
                 <View style={styles.container}>
                 
-                {/* top blue */}
-               
-
+                
+             
                 {/* main container form */}
         <View style={{padding:10}}>
             <View style={styles.mainDiv}>
                     <View style={styles.textInputs}>
+                       <MyModal/>
                         <TextInput
                         placeholder="Email"
                         style={styles.textInput1}
-                        
+                        onChangeText={(e)=>setInfo({...info, email:e})}
                         />
                     
                         <TextInput
                         placeholder="Password"
                         style={styles.textInput}
+                        onChangeText={(e)=>setInfo({...info, password:e})}
                         />
                     </View>
                     <View style={styles.guestDiv}>
@@ -117,55 +157,26 @@ const Form = ({props, dataz}) => {
                         <Text style={styles.text}>Forgot <Text style={styles.guest}>Password?</Text></Text>
                     </View>
                     <View style={styles.buttons}>
-                    <Text style={styles.btnLogin}>LOGIN</Text>
-                    <Text style={styles.btnSignup}>SIGN UP</Text>
+                  
+                    <TouchableOpacity onPress={login}>
+                        <Text style={styles.btnLogin}>LOGIN</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={register}>
+                        <Text style={styles.btnSignup}>SIGN UP</Text>
+                    </TouchableOpacity>
                     </View>
                 </View>
             </View>
 
-                {/* bottom blue */}
-              
-               
             </View>
-            {/* footer */}
+          
             <Footer/>
-             
-                {/* <SocialIcon/> */}
-            {/* </View> */} 
         </View>
       
-            <SocialIcon/>
+            <SocialIcon settingAdmin={settingAdmin}/>
         </View>
     )
-    //     <View>
-    //       
-    //         <View>
-    //             <Text>Email:</Text>
-    //             <TextInput
-    //             style={styles.textInput}
-    //             onChangeText={(e)=>setInfo({...info, email:e})}
-    //             />
-    //         </View>
-    //         <View>
-    //             <Text>Password:</Text>
-    //             <TextInput
-    //             style={styles.textInput}
-    //             onChangeText={(e)=>setInfo({...info, password:e})}
-    //             />
-    //         </View>
-    //         <View>
-    //             <Button
-    //             title="Login"
-    //             onPress={login}
-    //             />
-    //             <Text>Forgot password?</Text>
-    //         </View>
-    //         <View>
-    //             <Text>Login as <Text>Guest?</Text></Text>
-    //             <Text>Don't have an account? <Text onPress={register}>Register!</Text></Text>
-    //         </View>
-    //     </View>
-    // )
+   
 }
 
 export default Form
@@ -184,6 +195,17 @@ const styles = StyleSheet.create({
         borderTopRightRadius:30,
         borderBottomLeftRadius:30,
         borderBottomRightRadius:30,
+
+         
+
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     
     textInputs:{
@@ -242,5 +264,46 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         textAlign:'center',
         fontSize:15
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: '#02215A',
+        borderRadius: 20,
+        padding: 40,
+        paddingTop:10,
+        paddingBottom:10,
+        
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+      },
+      openButton: {
+        backgroundColor: '#F194FF',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        color:'white',
+        fontSize:15
+      },
 })

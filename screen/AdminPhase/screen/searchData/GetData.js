@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import firebase from 'firebase';
+import {firestore} from '../../../../firebase';
 
 export const getPost = (value) => {
         const [data, setData] = useState("")
-        firebase.firestore().collection("post").where("title", '==', title).get()
+        firestore().collection("post").where("title", '==', title).get()
         .then(res => {
             res.forEach(doc => {
                 setData(doc.data())

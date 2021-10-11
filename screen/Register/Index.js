@@ -1,14 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import Form from './form'
+import Forme from './porm'
 
 export default function Register({navigation}){
     return (
         <View style={styles.container}>
-          <Text>Register Now</Text>
 
-          <Form props={navigation}/>
+          <Forme props={navigation}/>
         </View>
     )
 }

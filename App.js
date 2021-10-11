@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform, InteractionManager } from 'react-native';
-import firebase from 'firebase';
+
 
 
 const Stack = createNativeStackNavigator()
@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator()
 import Login from './screen/LoginPhase/Index';
 import Register from './screen/Register/Index';
 import Profile from './screen/Profile/Index';
-import Main from './screen/Mainphase/Index';
+import ItoDapat from './screen/Mainphase/ItoDapat';
 import Admin from './screen/AdminPhase/Index'
 import AdminPanel from './screen/AdminPhase/AdminPanel';
 
@@ -65,12 +65,11 @@ if (Platform.OS === 'android') {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown:false}}>
-        
-        
+     
           <Stack.Screen name="Login" component={Login}/>
           <Stack.Screen name="Register" component={Register}/>
           <Stack.Screen name="Profile" component={Profile}/>
-          <Stack.Screen name="Main" component={Main}/>
+          <Stack.Screen name="ItoDapat" component={ItoDapat}/>
           <Stack.Screen name="Admin" component={Admin}/>
           <Stack.Screen name="AdminPanel" component={AdminPanel}/>
           

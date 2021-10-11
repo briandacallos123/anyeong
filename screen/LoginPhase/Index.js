@@ -7,19 +7,9 @@ import Admin from '../AdminPhase/Index'
 export default function Login({navigation}){
    const [isAdmin, setAdmin] = React.useState(false)
 
-
-   const settingAdmin = () => {
-     setAdmin(true)
-   }
-
-  
-
     return (
-        <View style={{
-          
-        }}>
-          
-          <Form props={navigation} dataz={isAdmin}/>
+        <View>
+          <Form props={navigation} />
           {/* <Admin props={navigation} settingAdmin={settingAdmin}/> */}
          
         </View>
