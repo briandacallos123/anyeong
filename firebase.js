@@ -25,7 +25,9 @@ if(firebase.apps.length === 0){
 }
 
 const firestore = firebase.firestore();
+export const {updateDoc, arrayUnion} = firebase.firestore()
 const auth = firebase.auth();
 export {auth}
 export {firestore}
+
 

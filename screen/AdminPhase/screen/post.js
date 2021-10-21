@@ -23,7 +23,7 @@ const Post = () => {
                         const newObj = {...change.doc.data(), id}
                         dataArray.push(newObj)
                 }
-                console.log("data mo: ",data)
+                // console.log("data mo: ",data)
                 setData(prev => {
                         return [...prev, ...dataArray]
                  })
@@ -35,9 +35,13 @@ const Post = () => {
     }
 
     return (
-        <View>
+        <View
+         style={{
+             backgroundColor:'white'
+         }}>
             <Header/>
             <Text>Post</Text>
+            
             <FlatList
             data={data}
             renderItem={(item)=> {

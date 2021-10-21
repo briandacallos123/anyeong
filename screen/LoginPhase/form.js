@@ -67,48 +67,69 @@ const Form = ({props, dataz}) => {
         )
       }
 
+    const guest = () => {
+
+        navigation.navigate('ItoDapat',{guest:true});
+    }
+      
+           
+  
      
     const login = () => {
-        if(info.email && info.password){
-            auth.signInWithEmailAndPassword(info.email, info.password)
-            .then((response)=>{
-                if(isAdmin){
                 
-                // navigation.navigate("Main")
-                const uid = response.user.uid
-                const email = response.user.email
-                // search admin credentials in firestore
-                firestore.collection("admin").where("email", '==', email).get()
-                .then(res => {
-                    res.forEach((err) => {
-                        Alert.alert("Welcome Admin")
-                        navigation.navigate('AdminPanel')
-                        
+        try{
+            if(info.email && info.password){
+                try{
+                    auth.signInWithEmailAndPassword(info.email, info.password)
+                .then((response)=>{
+                    setInfo({
+                        email:"",
+                        password:""
                     })
-                })
-               
-                }else{
-                   firestore.collection("users").where("email", '==', info.email).get()
-                    .then(res => {
-                        const myData = []
-                        res.forEach(doc => {
-                            
-                            myData.push(doc.data());
-                        })
-                        navigation.navigate('ItoDapat',{
-                            screen:'Profile',
-                            params:myData
-                        })
-                        
-                    }).catch(e => console.log("error ulit: ", e.message))
-
+                    firestore.collection('users').where('email','==',info.email).get().then((snapshot)=>{
+                        if(isAdmin){
+                    
+                            // navigation.navigate("Main")
+                            const uid = response.user.uid
+                            const email = response.user.email
+                            // search admin credentials in firestore
+                            firestore.collection("admin").where("email", '==', email).get()
+                            .then(res => {
+                                res.forEach((err) => {
+                                    Alert.alert("Welcome Admin")
+                                    navigation.navigate('AdminPanel')
+                                    
+                                })
+                            })
+                           
+                            }else{
+                               firestore.collection("users").where("email", '==', info.email).get()
+                                .then(res => {
+                                    const myData = []
+                                    res.forEach(doc => {
+                                        
+                                        myData.push(doc.data());
+                                    })
+                                    navigation.navigate('ItoDapat',{
+                                        screen:'Profile',
+                                        params:myData
+                                    })
+                                    
+                                }).catch()
+            
+                               
+                            }
+                    })
                    
+                   
+                })
+                }catch(e){
+                   Alert.alert(e.message)
                 }
-               
-            })
-            .catch(e => {
-                Alert.alert(e.message)
-            })
+                
+            }
+        }catch(e){
+            Alert.alert(e.message)
         }
         
     }
@@ -144,16 +165,19 @@ const Form = ({props, dataz}) => {
                         placeholder="Email"
                         style={styles.textInput1}
                         onChangeText={(e)=>setInfo({...info, email:e})}
+                        value={info.email}
                         />
                     
                         <TextInput
                         placeholder="Password"
+                        secureTextEntry={true}
                         style={styles.textInput}
                         onChangeText={(e)=>setInfo({...info, password:e})}
+                        value={info.password}
                         />
                     </View>
                     <View style={styles.guestDiv}>
-                        <Text style={styles.text}>Login As <Text style={styles.guest1}>Guest</Text></Text>
+                        <Text style={styles.text}>Login As <Text style={styles.guest1} onPress={guest}>Guest</Text></Text>
                         <Text style={styles.text}>Forgot <Text style={styles.guest}>Password?</Text></Text>
                     </View>
                     <View style={styles.buttons}>
@@ -219,7 +243,7 @@ const styles = StyleSheet.create({
         fontWeight:'normal',
         fontSize:15,
         padding:5,
-    },
+    },        
     textInput1:{
         borderBottomColor:'black',
         borderBottomWidth:1.5,

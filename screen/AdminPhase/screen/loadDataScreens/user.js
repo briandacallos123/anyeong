@@ -1,9 +1,10 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import firebase from 'firebase'
+
 
 export default function({data}){
-    const {id, age, email, name, password} = data
+    const {id, age, email, name, password} = data.item
+    console.log(data);
 
     return (
         <View>

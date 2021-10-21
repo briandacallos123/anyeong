@@ -3,10 +3,25 @@ import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native'
 import Header from '../../Parts/header'
 import User from '../../Images/User.png'
 
+let myId = ""
+let myName = ""
 const Profifle = ({route, navigation}) => {
     const item = route.params[0]
     const {age, course, email, id, name, password, section, studentNumber} = item
 
+    myId = id
+    myName = name
+    
+    // const editProfile = () => {
+    //     ImagePicker.requestCameraPermissionsAsync()
+    //     .then((res)=> {
+            
+    //     })
+    // }
+    const updateProfile = () => {
+        navigation.navigate("Setting")
+    }
+    
     return (
         <View style={{
             padding:20
@@ -22,10 +37,13 @@ const Profifle = ({route, navigation}) => {
                         <Text style={styles.text}>Name: {name}</Text>
                         <Text style={styles.text}>Age: {age}</Text>
                         <Text style={styles.text}>Section: {section}</Text>
+                        <Text style={styles.text}>Student ID: {studentNumber}</Text>
+                        <Text style={styles.text}>Course: {course}</Text>
+                        <Text style={styles.text}>Yr & Sec: {section}</Text>
                     </View>
                </View>
                <View style={styles.update}>
-                    <TouchableOpacity style={styles.btnUpdate}>
+                    <TouchableOpacity style={styles.btnUpdate} onPress={updateProfile}>
                         <Text style={styles.updateTxt}>Update</Text>
                     </TouchableOpacity>
                </View>
@@ -33,7 +51,12 @@ const Profifle = ({route, navigation}) => {
         </View>
     )
 }
-
+export function retId(){
+    return myId
+}
+export function retName(){
+    return myName
+}
 export default Profifle
 
 const styles = StyleSheet.create({
@@ -71,12 +94,14 @@ const styles = StyleSheet.create({
     },
     img:{
         height:120,
-        width:90,
+        width:120,
         marginRight:20
         
     },
     text:{
         color:'#012362',
-        fontSize:13
+        fontSize:15,
+        marginBottom:10
+
     }
 })

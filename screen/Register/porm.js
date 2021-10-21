@@ -117,12 +117,14 @@ const Forme = ({props}) => {
                     />
                     <TextInput
                     style={styles.textInput}
+                    secureTextEntry={true}
                     placeholder="Password"
                     onChangeText={(e) => setData({...data, password:e})}
                     />
                     <TextInput
                     style={styles.textInput}
                     placeholder="Re-enter Password"
+                    secureTextEntry={true}
                     onChangeText={(e) => setData({...data, rePassword:e})}
                     />
                     <View style={{flexDirection:'row', alignItems:'center',marginTop:10}}>

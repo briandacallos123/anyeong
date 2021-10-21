@@ -6,10 +6,9 @@ import Header from '../../Parts/header'
 
 function NewsUpdates(){
     const [data, setData] = useState([]);
-    
+
     useEffect(()=>{
         fetchPostData()
-        
     },[])
     
     const fetchPostData = ()=>{
@@ -25,9 +24,6 @@ function NewsUpdates(){
             setData(prev => {
                 return [...prev, ...dataArray]
             })
-           
-          
-            
         })
      
     }
@@ -62,13 +58,9 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         padding:20,
-        // backgroundColor:'white'
     },
     innerContainer:{
-        flex:1,
-        // alignItems:'center',
-        // justifyContent:'center',
-        
+        flex:1
     },
     itemContainer:{
         flex:1
