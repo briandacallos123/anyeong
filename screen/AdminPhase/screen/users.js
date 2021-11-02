@@ -1,109 +1,28 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, TouchableOpacityBase} from 'react-native'
 
 import User from './loadDataScreens/user'
 import { firestore } from '../../../firebase'
 import Userz from './searchData/User'
 import Header from '../../Parts/header'
+import {myIndex} from './searchData/User'
 
 const Users = () => {
-    const [data, setData] = React.useState([])
-    const [showData, setShowData] = React.useState(false)
+    const [data, setData] = useState([])
+    const [index, setIndex] = useState(0)
 
-    React.useEffect(()=>{
-        fetchPostData()
-    },[])
-
-    const fetchPostData = ()=>{
-        // firestore.collection('users').get()
-        // .then(res => {
-        //     const dataArray = []
-           
-        //     res.forEach(doc => {
-        //         const newObj = {...doc.data()}
-        //         dataArray.push(newObj)
-        //     })
-            
-        //     setData(prev => {
-        //         return [...prev, ...dataArray]
-        //     })
-          
-            
-        // })
-        firestore.collection('users').onSnapshot(snapshot => {
-            let changes = snapshot.docChanges();
-
-          
-
-            changes.forEach(change => {
-                if(change.type == "added"){
-                  let newData = change.doc.data()
-                  setData([...data, newData])
-
-                }else{
-                    console.log("Deleted, data: ", change.doc.data());
-                }
+    useEffect(()=>{
+        firestore.collection('users').get().then((snapshot) => {
+            let myArray = []
+            snapshot.docs.forEach(doc => {
+                myArray.push(doc.data())
             })
+            setData(myArray)
             
-         
-            // console.log("Array mo: ", dataArray);
-            // if(data.length == 0){
-            //     setData([...data, dataArray])
-            // }else{
-            //     data.map((item) => {
-            //         if(item.id != dataArray.id){
-            //             setData([...data, dataArray])
-            //             // console.log("Not equal");
-            //         }else{
-            //             // console.log("Equal");
-            //             setData([...data, dataArray])
-            //         }
-            //     })
-            // }
-           
-        //    if(data.length > 0){
-        //     data.map((item) => {
-        //         if(item.id != dataArray[0].id){
-        //             console.log("not equal");
-        //         }else{
-        //             console.log("Equal");
-        //         }
-        //     })
-        //    }else{
-        //        console.log("Wala pa laman");
-        //    }
-            // console.log("ARRAY: ", dataArray);
-
-            // if(dataArray.length > 0){
-            //     console.log("Orayt");
-            //     setData((prev)=>{
-            //        let newItem = dataArray.map((item)=>{
-            //             if((!item.id == prev.id)){
-            //                 return item
-            //             }
-            //         })
-            //         return [...prev, newItem]
-            //     })
-            // }
-            // setData(dataArray)
-            // if(dataArray.length > 0){
-            //     console.log("True");
-            //     setData((prev)=> {
-            //         let newData = dataArray.map((item) => {
-            //             if(!item.id == prev.id){
-            //                 return item
-            //             }
-            //         })
-            //         return [...prev, newData]
-            //     })
-            // }
-            // setData(prev => {
-            //     return [...prev, ...dataArray]
-            // })
         })
-     
-    }
-    
+       
+    },[])
+    console.log("Rendereing");
 
     return (
         <View style={styles.container}>
@@ -126,28 +45,15 @@ const Users = () => {
                             color:'white'
                         }}>Show All User</Text>
                     </TouchableOpacity>
-                <View>
-                <FlatList
-                        keyExtractor={(item)=>item.id}
-                        data={data}
-                        renderItem={(item)=>{
-                            return <User key={item.id} data={item}/>
-                        }}
-                    />
                 </View>
-                    {/* <View>
-                       
-                        <View>
-                            <View>
-                                <Text>Name:</Text>
-                                <TouchableOpacity>
-                                    <Text>Add</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        
-                    </View> */}
-                 </View>
+               <FlatList
+                data={data}
+                renderItem={(item)=>{
+                    // console.log(item);
+                       return <User data={item}/>
+               }}
+               />
+                   
             </View>
         </View>
     )
@@ -161,6 +67,9 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         flex:1
     },
+    header:{
+        flex:1
+    }
 
     
 })

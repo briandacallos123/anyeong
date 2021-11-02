@@ -1,9 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Image, Alert, TouchableOpacity} from 'react-native'
 import { Entypo } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import Admin from '../Images/admin.png'
 const SocialIcon = ({settingAdmin}) => {
 
     const adminTrue = () => {
@@ -27,7 +27,16 @@ const SocialIcon = ({settingAdmin}) => {
                 </View>
             </View>
             <View style={styles.right}>
-                <MaterialIcons onPress={adminTrue} name="admin-panel-settings" size={30} color="#02215A" />
+                {/* <MaterialIcons onPress={adminTrue} name="admin-panel-settings" size={30} color="#02215A" /> */}
+                <TouchableOpacity onPress={adminTrue}>
+                    <Image
+                    source={Admin}
+                    style={{
+                        width:30,
+                        height:30
+                    }}
+                    />
+                </TouchableOpacity>
             </View> 
         </View>
     )

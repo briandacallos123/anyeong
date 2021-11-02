@@ -5,12 +5,15 @@ import User from '../../Images/User.png'
 
 let myId = ""
 let myName = ""
+let myEmail = ""
+
 const Profifle = ({route, navigation}) => {
     const item = route.params[0]
     const {age, course, email, id, name, password, section, studentNumber} = item
 
     myId = id
     myName = name
+    myEmail = email
     
     // const editProfile = () => {
     //     ImagePicker.requestCameraPermissionsAsync()
@@ -52,7 +55,10 @@ const Profifle = ({route, navigation}) => {
     )
 }
 export function retId(){
-    return myId
+    return {myId}
+}
+export function retEmail(){
+    return myEmail
 }
 export function retName(){
     return myName

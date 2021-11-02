@@ -4,6 +4,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { firestore } from '../../../../firebase';
 import { Dimensions } from 'react-native';
 
+let index = 0
+
 const User = () => {
     const [dataMo, setData] = useState("")
     const [noData, setNoData] = useState(false)
@@ -11,6 +13,7 @@ const User = () => {
     const [edit, setEdit] = useState(true)
     const [editVar, setEditVar] = useState("")
     const [myD, setD] = useState(0)
+
     React.useEffect(()=>{
         setD(Math.round(Dimensions.get('window').width))
     },[])
@@ -34,59 +37,10 @@ const User = () => {
         
         
     }
-    
-    // const editMe = () => {
-    //     setEdit(!edit)
-    // }   
-    
-    
-    
-    // const ReturnComponent = () => {
-    //     return(
-    //         <View>
-    //             <View>
-    //                 {edit ? <Text>Name:{dataMo.name}</Text>:
-    //                 <View style={styles.edit}>
-    //                     <Text>Name:</Text><TextInput name="name" value={dataMo.name} style={styles.textInput}/>
-    //                 </View>}
-    //             </View>
-    //             <View>
-    //                 {edit ? <Text>Age:{dataMo.age}</Text>:
-    //                 <View style={styles.edit}>
-    //                     <Text>Age:</Text><TextInput name="age"  value={dataMo.age}  style={styles.textInput}/>
-    //                 </View>}
-                  
-    //             </View>
-    //             <View>
-    //                 {edit ? <Text>Email:{dataMo.email}</Text>:
-    //                 <View style={styles.edit}>
-    //                     <Text>Email:</Text><TextInput value={dataMo.email} style={styles.textInput}/>
-    //                 </View>}
-                  
-    //             </View>
-    //             <View>
-    //                 {edit ? <Text>Id:{dataMo.id}</Text>:
-    //                 <View style={styles.edit}>
-    //                     <Text>Id:</Text><TextInput value={dataMo.id} style={styles.textInput}/>
-    //                 </View>}
-                   
-    //             </View>
-    //             <View>
-    //                 {edit ? <Text>Password:{dataMo.password}</Text>:
-    //                 <View style={styles.edit}>
-    //                     <Text>Password:</Text><TextInput value={dataMo.password} style={styles.textInput}/>
-    //                 </View>}
-    //             </View>
-    //             <Button
-    //             title="edit"
-    //             onPress={editMe}
-    //             />
-    //         </View>
-    //     )
-    // }
   
     const deleteUser = () => {
         firestore.collection('users').doc(dataMo.id).delete()
+        index + 1
     }
     
     return (
@@ -131,35 +85,16 @@ const User = () => {
                         </TouchableOpacity>
                    
                 </View>
-               
-                
-               
-              
                 
             </View>
-           {/* <View  style={styles.container}>
-            <TextInput
-                style={styles.textInput}
-                onChangeText={(e)=>setSearchField(e)}
-                placeholder="Find User"
-                value={searchField}
-                />
-               
-               <TouchableOpacity style={styles.search} onPress={findUser}>
-                    <AntDesign name="search1" size={24} color="black" />
-                    <Text style={styles.search}>Search</Text>
-               </TouchableOpacity>
-           </View>
-            
-            <View>
-                {dataMo ? <ReturnComponent/>:<Text>Walapa</Text>}
-            </View> */}
         </View>
     )
 }
 
 export default User
-
+export const myIndex = () => {
+    return index
+}
 const styles = StyleSheet.create({
     container:{
         padding:10,

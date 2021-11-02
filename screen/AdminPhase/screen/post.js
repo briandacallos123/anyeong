@@ -1,15 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View, FlatList } from 'react-native'
-import Header from '../../Mainphase/Header'
+import Header from '../../Parts/header'
 import Poste from './loadDataScreens/post'
 import firebase from 'firebase'
+import Fost from './searchData/Post'
 
 const Post = () => {
     const [data, setData] = React.useState([])
 
-    React.useEffect(()=>{
-        fetchPostData()
-    },[])
+
   
     const fetchPostData = ()=>{
         firebase.firestore().collection('post').onSnapshot(snapshot => {
@@ -37,11 +36,12 @@ const Post = () => {
     return (
         <View
          style={{
-             backgroundColor:'white'
+             backgroundColor:'white',
+             flex:1
          }}>
             <Header/>
             <Text>Post</Text>
-            
+            <Fost/>
             <FlatList
             data={data}
             renderItem={(item)=> {
@@ -54,4 +54,6 @@ const Post = () => {
 
 export default Post
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+
+})

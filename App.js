@@ -15,6 +15,7 @@ import ItoDapat from './screen/Mainphase/ItoDapat';
 import Admin from './screen/AdminPhase/Index'
 import AdminPanel from './screen/AdminPhase/AdminPanel';
 import Welcome from './screen/LoginPhase/Welcome';
+import Forget from './screen/LoginPhase/Recover'
 
 export default function App(){
   useEffect(()=>{
@@ -65,16 +66,18 @@ if (Platform.OS === 'android') {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown:false}}>
+        <Stack.Navigator screenOptions={{headerShown:false}}>
           
-    
-          <Stack.Screen name="Welcome" component={Welcome}/>
-          <Stack.Screen name="AdminPanel" component={AdminPanel}/>
+          
+       
+        <Stack.Screen name="AdminPanel" component={AdminPanel}/>
+         <Stack.Screen name="Welcome" component={Welcome}/>
+          <Stack.Screen name="Admin" component={Admin}/>
           <Stack.Screen name="Login" component={Login}/>
           <Stack.Screen name="Register" component={Register}/>
           <Stack.Screen name="Profile" component={Profile}/>
           <Stack.Screen name="ItoDapat" component={ItoDapat}/>
-          <Stack.Screen name="Admin" component={Admin}/>
+          <Stack.Screen name="Forget" component={Forget}/>
           
           
 

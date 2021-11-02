@@ -23,6 +23,7 @@ const Form = ({props, dataz}) => {
         email:"",
         password:""
     })
+    
     const settingAdmin = () => {
         setModalVisible(true);
         setAdmin(!isAdmin)
@@ -77,15 +78,16 @@ const Form = ({props, dataz}) => {
      
     const login = () => {
                 
-        try{
+
             if(info.email && info.password){
                 try{
                     auth.signInWithEmailAndPassword(info.email, info.password)
-                .then((response)=>{
+                    .then((response)=>{
                     setInfo({
                         email:"",
                         password:""
                     })
+                    
                     firestore.collection('users').where('email','==',info.email).get().then((snapshot)=>{
                         if(isAdmin){
                     
@@ -122,25 +124,29 @@ const Form = ({props, dataz}) => {
                     })
                    
                    
+                }).catch(err=>{
+                    Alert.alert("No record found.")
                 })
                 }catch(e){
-                   Alert.alert(e.message)
+                   Alert.alert("ewan")
                 }
                 
             }
-        }catch(e){
-            Alert.alert(e.message)
-        }
+      
         
     }
     
     const register = () => {
         navigation.navigate("Register")
     }
+    
+    const forgot = () => {
+        navigation.navigate('Forget')
+    }
   
     return (
         <View style={{
-              backgroundColor:'white',
+              backgroundColor:'#D5EAF3',
                 height:height,
                 padding:20,
                 
@@ -159,6 +165,10 @@ const Form = ({props, dataz}) => {
                 {/* main container form */}
         <View style={{padding:10}}>
             <View style={styles.mainDiv}>
+                    {isAdmin && <View style={{alignItems:'center'}}>
+                        <View style={{width:120, backgroundColor:'#02215A',height:3}}></View>
+                        <Text style={{color:'#02215A', fontSize:17,fontWeight:'bold'}}>ADMIN</Text>
+                    </View>}
                     <View style={styles.textInputs}>
                        <MyModal/>
                         <TextInput
@@ -178,7 +188,7 @@ const Form = ({props, dataz}) => {
                     </View>
                     <View style={styles.guestDiv}>
                         <Text style={styles.text}>Login As <Text style={styles.guest1} onPress={guest}>Guest</Text></Text>
-                        <Text style={styles.text}>Forgot <Text style={styles.guest}>Password?</Text></Text>
+                        <Text style={styles.text}>Forgot <Text style={styles.guest} onPress={forgot}>Password?</Text></Text>
                     </View>
                     <View style={styles.buttons}>
                   

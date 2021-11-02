@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, Alert, ActivityIndicator} from 'react-na
 import logo from '../Images/bg.png'
 import { Dimensions } from 'react-native'
 import cmu from '../Images/cmu.jpg'
+
 const Welcome = ({navigation}) => {
     const [height, setHeight] = useState(0)
     useEffect(()=>{

@@ -1,41 +1,86 @@
 import React, {useState, useRef} from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Dimensions, Alert} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity,Keyboard,TouchableWithoutFeedback, TextInput, Dimensions, Alert} from 'react-native'
 import Header from '../../Parts/header'
-import { firestore, auth, deleteUser} from '../../../firebase'
+import { firestore} from '../../../firebase'
 // let admin = require('firebase-admin')
+import {retId,} from './Profile'
+import {retEmail} from './Profile'
+import {auth} from '../../../firebase'
 
-import {retId} from './Profile'
+const user = firestore.currentUser
 
 const height = Math.round(Dimensions.get('window').height)
 
 const Setting = ({route, navigation}) => {
-    // console.log(guestTrue);
+    
 
     const [isEdit, setEdit] = useState(false);
     const [isDeleteAccount, setDeleteAccount] = useState(false);
     const [isLogout, setLogout] = useState(false);
     const [delValidate, setDelValidate] = useState(false)
-   
+    const [isHelp, setIsHelp] = useState(false)
+    const [helpz, setHelp] = useState("")
+    const [sendHelp, setSendHelp] = useState(false)
     const name = useRef("")
     const id = retId()
+    
     const [info, setInfo] = useState({
         name:"",
         age:"",
         studentNumber:"",
         course:""
     })
+    // console.log("wow", auth.currentUser.email);
     
-
-    const UpdateComponent = () => {
-          
-        
-        // dacallosbrian123@gmail.com
-     
+    const checkHelp = () => {
+        if(helpz.length > 10){
+            setSendHelp(true)
+            setDeleteAccount(false)
+            setIsHelp(false)
+            setLogout(false)
+            setEdit(false)
+            setHelp(false)
+            submitHelp()
+        }else{
+            Alert.alert("Please specify your concern")
+        }
     }
+    const submitHelp = () => {
+        firestore.collection('concerns').add({
+            report:{
+                email:retEmail(),
+                issue:helpz
+            }
+        })
+    }
+    const deleteAuthAccount = () => {
+        const user = auth.currentUser;
+
+        user.delete().then(() => {
+          Alert.alert("Account deleted succesfully.")
+          navigation.navigate("Login")
+        }).catch((error) => {
+          
+        });
+    }
+
+    const delAccount = () => {
+        setDeleteAccount(!isDeleteAccount)
+        setIsHelp(false)
+        setLogout(false)
+        setEdit(false)
+        setHelp(false)
+        setSendHelp(false)
+    }
+
+  
     const update = () => {
         setEdit(!isEdit)
         setDeleteAccount(false)
         setLogout(false)
+        setIsHelp(false)
+        setHelp(false)
+        setSendHelp(false)
     }
 
     const updateData = () =>{
@@ -56,6 +101,9 @@ const Setting = ({route, navigation}) => {
         setLogout(!isLogout)
         setEdit(false)
         setDeleteAccount(false)
+        setIsHelp(false)
+        setHelp(false)
+        setSendHelp(false)
     }
     const logoutReal = () => {
         auth.signOut().then(()=>{
@@ -63,34 +111,47 @@ const Setting = ({route, navigation}) => {
             navigation.navigate('Login')
         })
     }
-    const delAccount = () => {
-        setDeleteAccount(!isDeleteAccount)
-        setEdit(false)
+    const help = () =>{
+        setIsHelp(!isHelp)
         setLogout(false)
+        setEdit(false)
+        setDeleteAccount(false)
+        setHelp(false)
+        setSendHelp(false)
     }
-    const delMyAccount = () =>{
+  
+    // const delMyAccount = () =>{
 
         
-        firestore.collection('users').doc(id).delete()
-        .then((res) => {
-            Alert.alert("Delete Account Successful")
-            auth.signOut().then(()=>{
-                console.log("Signed outt");
-                navigation.navigate('Login')
-            })
-        })
+    //     firestore.collection('users').doc(id).delete()
+    //     .then((res) => {
+    //         Alert.alert("Delete Account Successful")
+    //         auth.signOut().then(()=>{
+    //             console.log("Signed outt");
+    //             navigation.navigate('Login')
+    //         })
+    //     })
        
-    }
+    // }
     return (
-       <View style={styles.container}>
+      <TouchableWithoutFeedback
+      onPress={()=>{
+          Keyboard.dismiss()
+      }}
+      >
+           <View style={styles.container}>
            <Header/>
            <View style={styles.btn}>
                <TouchableOpacity style={styles.opa} onPress={update}>
-                   <Text style={styles.text}>Update Profile</Text>
+                   <Text style={styles.text}>Update</Text>
                </TouchableOpacity>
                <TouchableOpacity style={styles.opa} onPress={delAccount}>
-                   <Text style={styles.text}>Delete Account</Text>
+                   <Text style={styles.text}>Delete</Text>
                </TouchableOpacity>
+               <TouchableOpacity style={styles.opa} onPress={help}>
+                   <Text style={styles.text}>Help</Text>
+               </TouchableOpacity>
+             
                <TouchableOpacity style={styles.opa} onPress={logout}>
                    <Text style={styles.text}>Logout</Text>
                </TouchableOpacity>
@@ -139,10 +200,10 @@ const Setting = ({route, navigation}) => {
                             justifyContent:'center',
                             padding:20
                         }}>
-                            <TouchableOpacity style={{marginRight:20}} onPress={delMyAccount}>
+                            <TouchableOpacity style={{marginRight:20}} onPress={deleteAuthAccount}>
                                 <Text style={{color:'red',fontSize:17}}>Yes</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={delAccount}>
                                 <Text>No</Text>
                             </TouchableOpacity>
                         </View>  
@@ -154,24 +215,55 @@ const Setting = ({route, navigation}) => {
                     alignItems:'center',
                     paddingTop:50
                 }}>
-                    <TouchableOpacity onPress={logoutReal}>
-                        <Text style={{padding:10, color:'#012362', fontSize:17}}>Confirm Logout</Text>
-                    </TouchableOpacity>
+                    <Text style={{fontSize:15}}>Logging Out ?</Text>
+                    <View style={{flexDirection:'row'}}>
+                        <TouchableOpacity onPress={logoutReal}>
+                            <Text style={{padding:10, color:'#012362', fontSize:17, color:'red'}}>Yes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={logout}>
+                            <Text style={{padding:10, fontSize:17, color:'#012362'}}>No</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>    
                 }
-                {/* {delValidate && 
-                 <View style={{
-                    justifyContent:'center',
-                    alignItems:'center',
-                    paddingTop:50
-                }}>
-                    <TouchableOpacity onPress={delMyAccount}>
-                        <Text style={{padding:10, color:'#012362', fontSize:17}}>Confirm deletion</Text>
-                    </TouchableOpacity>
-                </View>   
-                } */}
+                {isHelp && <View style={{padding:15, paddingTop:30}}>
+                    <Text style={{
+                        fontWeight:'normal',
+                        fontSize:15,
+                        color:'#012362'
+                        }}>Enter your concerns</Text>    
+                    {/* <View style={{flexDirection:'row',marginBottom:20, alignItems:'center',paddingTop:10}}>
+                        <Text style={{marginRight:10}}>Concern Title: </Text>
+                        <TextInput style={{borderBottomColor:'black',borderBottomWidth:2, width:120}}></TextInput>
+                    </View>  */}
+                    <TextInput
+                    multiline
+                    style={{
+                        borderBottomWidth:1,
+                        borderBottomColor:'black'
+                    }}
+                    onChangeText={(e)=>setHelp(e)}
+                    ></TextInput>
+                    <View style={{
+                        alignItems:'flex-end'
+                    }}>
+                        <TouchableOpacity style={{width:80, backgroundColor:'#012362',marginTop:10,borderTopRightRadius:15}} onPress={checkHelp}>
+                            <Text style={
+                                {color:'white',padding:10, textAlign:'center'}
+                                
+                                }>Send</Text>
+                        </TouchableOpacity>
+                    </View>
+                   
+                </View>
+                }
+                <View style={{padding:90}}>
+                {sendHelp ? <Text style={{fontWeight:'bold'}}>We will notify you as soon as possible, Thank you.</Text>:<Text></Text>}
+                </View>
+               
            </View>
        </View>
+      </TouchableWithoutFeedback>
     )
 }
 
@@ -184,12 +276,15 @@ const styles = StyleSheet.create({
     },
     opa:{
         backgroundColor:'#012362',
-       
+        width:80,
+        justifyContent:'center',
+        alignItems:'center',
+        borderTopRightRadius:10
     },
     btn:{
         marginTop:20,
         flexDirection:'row',
-        justifyContent:'space-around',
+        justifyContent:'space-between'
     },
     text:{
         color:'white',

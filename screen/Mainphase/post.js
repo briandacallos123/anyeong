@@ -6,48 +6,86 @@ import { firestore } from '../../firebase';
 import { arrayUnion } from '../../firebase';
 import { retName } from './screens/Profile';
 import { AntDesign } from '@expo/vector-icons';
+import {RetGuest} from './ItoDapat'
 
 const Post = ({data}) => {
+    const [isGuest, setGuest] = useState(RetGuest)
+    console.log(isGuest);
     const [isComment, setComment] = useState(false)
-    const {title, body, id, comment} = data
+    const {title, body, id, comment, likes} = data
     const [commentz, setCommentz] = useState({
-        name:retName(),
+        name:"",
         comment:""
     }); 
+    const [isLike, setLike] = useState(false);
+    
     const [myData, setMyData] = useState(comment)
     const [leastData, setLeastData] = useState([])
+    const [showMore, setShowMore] = useState(false)
+    
+    // hold likes state
+    const [liked, setLikes] = useState(likes)
 
     useEffect(()=>{
         firestore.collection('post').doc(id).update({
-            comment:myData
+            comment:myData,
+            likes:liked
         })
-        Ret5()
-    },[myData])
+        revData()
+       
+    },[myData, liked])
+
+ 
    
 
     const addComment = () => {
+       if(isGuest){
+           Alert.alert("You have to create an account first before commenting.")
+       }else{
         setMyData([...myData, commentz])
         setCommentz("")
-       
         
+       }
     }
 
-    const Ret5 = () =>{
-       let revItem = myData.map(item => item).reverse()
-       setLeastData(revItem)
+    const revData = () => {
+        let myRevData = myData.map((item) => item).reverse()
+        setLeastData(myRevData)
     }
+
+    // addlike
+    
 
     const RenderData = () => {
-       leastData.map((item, index) =>{
-           if(index < 3){
-               return (
-                   <View>
-                       <Text>{item.name}</Text>
-                       <Text>{item.comment}</Text>
-                   </View>
-               )
-           }
-       })
+        return(
+            <View>
+                {leastData.map((item, index) => {
+                    if(index < 3){
+                        return(
+                            <View key={index} style={{marginBottom:5}}>
+                                <Text style={{fontWeight:'bold'}}>{item.name}</Text>
+                                <Text>{item.comment}</Text>
+                            </View>
+                        )
+                        }
+                    if(showMore){
+                        return(
+                            <View key={index} style={{marginBottom:5}}>
+                                <Text style={{fontWeight:'bold'}}>{item.name}</Text>
+                                <Text>{item.comment}</Text>
+                            </View>
+                        )
+                    }
+                })}
+            </View>
+        )
+    }
+    const tawaginMoko = () => {
+        if(!isGuest){
+            setLikes(likes + 1)
+        }else{
+            Alert.alert("Register ka muna")
+        }
     }
     return (
         <View style={styles.container}>
@@ -69,9 +107,12 @@ const Post = ({data}) => {
                         flexDirection:'row',
                         justifyContent:'space-between'
                     }}>
-                        <TouchableOpacity style={{flex:1}}>
-                        <AntDesign name="like1" size={22} color="green" />
-                        </TouchableOpacity>
+                        <View style={{flex:1, flexDirection:'row'}}>
+                            <TouchableOpacity onPress={()=>tawaginMoko()}>
+                                <AntDesign name="like1" size={22} color="green" />
+                            </TouchableOpacity>
+                            <Text style={{position:'relative',top:2, marginLeft:5}}>{liked}</Text>
+                        </View>
 
                         <TouchableOpacity style={{flexDirection:'row', width:90, marginBottom:5, flex:2}} onPress={()=>setComment(!isComment)}>
                         <FontAwesome name="commenting" size={22} color="green" />
@@ -81,12 +122,12 @@ const Post = ({data}) => {
                 </View>
 
                 {/* adding comment */}
-                <View style={{backgroundColor:'#F4F6F9', flexDirection:'row',alignItems:'center',alignSelf:'stretch'}}>
+                <View style={{backgroundColor:'#F4F6F9', flexDirection:'row',alignItems:'center',alignSelf:'stretch', marginBottom:7}}>
                     <TextInput
                     placeholder="Write a comment..."
                     value={commentz.comment}
                     style={{width:250, padding:10,color:'black'}}
-                    onChangeText={(e)=>setCommentz({...commentz, comment:e})}
+                    onChangeText={(e)=>setCommentz({...commentz,name:retName(), comment:e})}
                     />
                     {/* triggering comment */}
                     <TouchableOpacity onPress={addComment}>
@@ -100,9 +141,9 @@ const Post = ({data}) => {
                    
                 }}>
                     {<RenderData/>}
-                   <TouchableOpacity style={{marginTop:10}}>
-                        <Text style={{fontWeight:'bold'}}>View More Comments...</Text>
-                   </TouchableOpacity>
+                 {myData.length > 4 &&  <TouchableOpacity style={{marginTop:10}} onPress={()=>setShowMore(!showMore)}>
+                        <Text style={{fontWeight:'bold'}}>{showMore ? <Text>Show Less...</Text>:<Text>Show More...</Text>}</Text>
+                   </TouchableOpacity>}
                   
                 </View>
 

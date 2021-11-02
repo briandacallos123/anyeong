@@ -4,14 +4,18 @@ import firebase from 'firebase'
 import Post from '../post';
 import Header from '../../Parts/header'
 
+
 function NewsUpdates(){
+    
+  
+ 
     const [data, setData] = useState([]);
 
     useEffect(()=>{
         fetchPostData()
     },[])
     
-    const fetchPostData = ()=>{
+    const fetchPostData = ()=>{ 
         firebase.firestore().collection('post').get()
         .then(res => {
             const dataArray = []
@@ -42,7 +46,7 @@ function NewsUpdates(){
                             data={data}
                             keyExtractor={(item) => item.id}
                             renderItem={({item}) => {
-                                return <Post  data={item}/>
+                                return <Post  data={item} />
                             }}
                       /> 
                       
