@@ -28,9 +28,12 @@ const firestore = firebase.firestore();
 export const {updateDoc, arrayUnion} = firebase.firestore()
 const auth = firebase.auth();
 const {getAuth, deleteUser} = firebase.auth()
+const { sendEmailVerification  } = firebase.auth()
 
 
 export {firestore}
 export {auth}
+export {getAuth}
+export {sendEmailVerification}
 
 export {deleteUser}

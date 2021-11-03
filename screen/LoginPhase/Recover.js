@@ -1,20 +1,39 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert} from 'react-native'
 import Header from '../Parts/header'
+import { getAuth, sendPasswordResetEmail } from '../../firebase'
+
 
 const Forget = ({navigation}) => {
     const [submitted, setSubmitted] = useState(false)
     const [email, setEmail] = useState("");
-
+    
     const submit = () => {
         if(email){
+
             setSubmitted(true)
+            sendVerification()
             setEmail("")
             retToLogin()
+
         }else{
             Alert.alert("Please specify your email")
         }
         
+    }
+    const sendVerification = () => {
+        const auth = getAuth;
+        sendPasswordResetEmail(email, auth)
+          .then(() => {
+            // Password reset email sent!
+            // ..
+            console.log("success");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+          });
     }
     const retToLogin = () => {
         setTimeout(()=>{
