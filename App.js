@@ -72,6 +72,7 @@ if (Platform.OS === 'android') {
        
         
         <Stack.Screen name="Welcome" component={Welcome}/>
+        
         <Stack.Screen name="AdminPanel" component={AdminPanel}/>
           <Stack.Screen name="Admin" component={Admin}/>
           <Stack.Screen name="Login" component={Login}/>

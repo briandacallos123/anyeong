@@ -3,14 +3,16 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native'
 import Post from '../searchData/Post'
 
 const Poste = ({dataz}) => {
-    const {title, body, id} = dataz.item
+    const {title, body, id} = dataz
    
     return (
         <View>
-            <Post/>
             <TouchableOpacity>
-                <Text>Title:{title} </Text>
-                <Text>Id: {id}</Text>
+                <Text>Title: <Text style={{
+                    fontSize:14,
+                    fontWeight:'bold'
+                    
+                    }}>{title} </Text></Text>
             </TouchableOpacity>
         </View>
 

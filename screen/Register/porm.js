@@ -81,9 +81,12 @@ const Forme = ({props}) => {
                 Alert.alert("Error:", e.message);
             })
                 
+             }else{
+                Alert.alert("You've entered invalid Student Number")
              }
+            }
             
-        }
+        
     
     
 
@@ -109,6 +112,7 @@ const Forme = ({props}) => {
                     style={styles.textInput}
                     placeholder="Age"
                     onChangeText={(e) => setData({...data, age:e})}
+                    
                     />
                     <TextInput
                     style={styles.textInput}

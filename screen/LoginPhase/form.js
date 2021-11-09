@@ -195,9 +195,9 @@ const Form = ({props, dataz}) => {
                     <TouchableOpacity onPress={login}>
                         <Text style={styles.btnLogin}>LOGIN</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={register}>
+                    {!isAdmin && <TouchableOpacity onPress={register}>
                         <Text style={styles.btnSignup}>SIGN UP</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                     </View>
                 </View>
             </View>

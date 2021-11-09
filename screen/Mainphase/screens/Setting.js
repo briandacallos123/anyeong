@@ -84,6 +84,43 @@ const Setting = ({route, navigation}) => {
     }
 
     const updateData = () =>{
+        // firestore.collection('users').doc(id).update({
+        //     name:"dog"
+        // })
+        // if(info.name){
+        //     console.log("hello");
+        //     firestore.collection('users').doc(id).update({
+        //         name:info.name
+        //     })
+        //     // firestore.collection('users').doc(id).update({
+        //     //     name:info.name,
+        //     // })
+        //     // Alert.alert("You need to login again to apply changes.")
+        //     // navigation.navigate("Login")
+        // }else if(info.age){
+        //     console.log("hi");
+        //     // firestore.collection('users').doc(id).update({
+        //     //     age:info.age,
+                
+        //     // })
+        //     // Alert.alert("You need to login again to apply changes.")
+        //     // navigation.navigate("Login")
+        // }else if(info.studentNumber){
+        //     firestore.collection('users').doc(id).update({
+        //         studentNumber:info.studentNumber,
+                
+        //     })
+        //     Alert.alert("You need to login again to apply changes.")
+        //     navigation.navigate("Login")
+        
+        // }else if(info.course){
+        //     firestore.collection('users').doc(id).update({
+        //         course:info.course,
+                
+        //     })
+        //     Alert.alert("You need to login again to apply changes.")
+        //     navigation.navigate("Login")
+        // }
         if(info.name && info.age && info.studentNumber && info.course){
             firestore.collection('users').doc(id).update({
                 name:info.name,

@@ -16,7 +16,7 @@ const Fost = () => {
         {/* search field */}
         <View style={styles.search}>
             <TextInput
-            placeholder="Find user email:"
+            placeholder="Search Post:"
             style={styles.textInput}
             onChangeText={(e)=>{
                 setSearchField(e)

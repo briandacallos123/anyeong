@@ -17,9 +17,9 @@ import Post from './screen/post'
 const AdminPanel = () => {
     return (
      
-           <Tab.Navigator screenOptions={{headerShown:false}}>
+           <Tab.Navigator screenOptions={{headerShown:false,tabBarStyle: { backgroundColor:'#012362'}}}>
                <Tab.Screen name="user" component={Users}/>
-               <Tab.Screen name="admin" component={Admin}/>
+               {/* <Tab.Screen name="admin" component={Admin}/> */}
                <Tab.Screen name="Post" component={Post}/>
            </Tab.Navigator>
        

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableOpacityBase} from 'react-native'
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput, TouchableOpacityBase, ScrollView, Alert} from 'react-native'
 
 import User from './loadDataScreens/user'
 import { firestore } from '../../../firebase'
@@ -17,7 +17,7 @@ const Users = () => {
     const [noData, setNoData] = useState(false)
     const [searchField, setSearchField] = useState("")
     const [edit, setEdit] = useState(true)
-    const [editVar, setEditVar] = useState("")
+    const [editVar, setEditVar] = useState(false)
     const [myD, setD] = useState(0)
 
 
@@ -32,6 +32,8 @@ const Users = () => {
         })
        
     },[index])
+
+ 
 
     const findUser = (e) => {
         firestore.collection("users").where("email", '==', searchField).get()
@@ -65,6 +67,9 @@ const Users = () => {
      const deleteUser = () => {
         firestore.collection('users').doc(dataMo.id).delete()
         setIndex(index + 1)
+
+        Alert.alert("Successfully Deleted")
+        setData("")
     }
     console.log("Index to: ", index);
 
@@ -96,95 +101,52 @@ const Users = () => {
                         flexDirection:'row',
                         marginTop:5
                     }}>
-                        <View>
-                            <View style={{
-                                flexDirection:'row',
-                                alignItems:'center',
-                                marginBottom:5
-                            }}>
-                                 <Text style={styles.textHeader} style={{marginRight:30}}>Name:</Text>
-                                 <TextInput
-                                value={dataMo.name}
-                                ref={myRef}
-                                style={{
-                                    borderColor:'black',
-                                    borderWidth:1,
-                                    borderRadius:5,
-                                    width:120,
-                                    padding:3
-                                }}
-                                multiline
-                                />
+    
+                    {dataMo ? 
+                        <View style={{flexDirection:'row'}}>
+                           <View>
+                            <View>
+                                    <Text>Name: {dataMo.name}</Text>
+                                </View>
+                                <View>
+                                    <Text>Age: {dataMo.age}</Text>
+                                </View>
+                                <View>
+                                    <Text>Yr&Sec: {dataMo.section}</Text>
+                                </View>
+                                <View>
+                                    <Text>Course: {dataMo.course}</Text>
+                                </View>
+                                <View>
+                                    <Text>Email: {dataMo.email}</Text>
+                                </View>
+                                <View>
+                                    <Text>Password: {dataMo.password}</Text>
+                                </View>
                             </View>
-                            {/* <Text style={styles.textHeader}>Age:</Text>
-                            <Text style={styles.textHeader}>Student: </Text>
-                            <Text style={styles.textHeader}>Username: </Text> */}
-                            <View style={{flexDirection:'row',alignItems:'center',marginBottom:5}}>
-                                <Text style={{marginRight:5}}>Password:</Text>
-                                <TextInput
-                                    style={{
-                                        borderColor:'black',
-                                        borderWidth:1,
-                                        borderRadius:5,
-                                        width:120,
-                                        padding:3
-                                    }}
-                                    multiline
-                                    value={dataMo.password}
-                                    />
+                            <View>
+                                <TouchableOpacity style={{marginBottom:5}}>
+                                    <Text style={styles.btn}>Edit</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={deleteUser}>
+                                    <Text style={styles.btn}>Delete</Text>
+                                </TouchableOpacity>
                             </View>
-                            <View style={{flexDirection:'row', alignItems:'center', marginBottom:5}}>
-                                <Text style={{marginRight:33}}>Email:</Text>
-                                <TextInput
-                                multiline
-                                style={{
-                                    borderColor:'black',
-                                    borderWidth:1,
-                                    borderRadius:5,
-                                    width:120,
-                                    padding:3
-                                }}
-                                />
-                            </View>
-                            <View style={{flexDirection:'row', alignItems:'center', marginBottom:5}}>
-                                <Text style={{marginRight:42}}>Age:</Text>
-                                <TextInput
-                                multiline
-                                style={{
-                                    borderColor:'black',
-                                    borderWidth:1,
-                                    borderRadius:5,
-                                    width:120,
-                                    padding:3
-                                }}
-                                />
-                            </View>
-                            <View style={{flexDirection:'row', alignItems:'center', marginBottom:5}}>
-                                <Text style={{marginRight:7}}>Student #:</Text>
-                                <TextInput
-                                multiline
-                                style={{
-                                    borderColor:'black',
-                                    borderWidth:1,
-                                    borderRadius:5,
-                                    width:120,
-                                    padding:3
-                                }}
-                                />
-                            </View>
-                        </View>
-                        <View>
                             
-                           
                         </View>
+                        :
                         <View>
-                            <TouchableOpacity onPress={addNewData}>
-                                    <Text style={styles.btn}>Add</Text>
+                            {/* <TouchableOpacity>
+                                <Text>Edit</Text>
                             </TouchableOpacity>
-                            {dataMo ? <TouchableOpacity onPress={deleteUser}>
-                                    <Text style={edit ? styles.isEdit:styles.btn }>Delete</Text>
-                                </TouchableOpacity>:<Text></Text>}
+                            <TouchableOpacity>
+                                <Text>Delete</Text>
+                            </TouchableOpacity> */}
                         </View>
+                    }
+                   
+                       
+                        
                     </View>
                     {/* <View style={{
                         width:280,
@@ -248,14 +210,24 @@ const Users = () => {
                         }}>Show All User</Text>
                     </TouchableOpacity>
                 </View>
-               <FlatList
+               <ScrollView>
+                {data.map((item, index) => {
+                    //    console.log(item);
+                    // console.log(item);
+                // const {id, age, email, name, password} = item.item
+                    return <User key={index} data={item}/>
+                //     console.log(id);
+                    })}
+               </ScrollView>
+               {/* <FlatList
+                keyExtractor={(item, index)=> index}
                 data={data}
                 renderItem={(item)=>{
                     // console.log(item);
                        return <User data={item}/>
                }}
                />
-                   
+                    */}
             </View>
         </View>
     )

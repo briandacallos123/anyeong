@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { StyleSheet, Text, View, FlatList, TextInput, Button, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Text, View, FlatList, TextInput, Button, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import Header from '../../Parts/header'
 import Poste from './loadDataScreens/post'
 import firebase from 'firebase'
@@ -10,6 +10,13 @@ const Post = () => {
     const [data, setData] = React.useState([])
     const [searchData, setSearchField] = useState("")
     const [adding, setAdding] = useState(true)
+    const [index, setIndex] = useState(0)
+    const [info, setInfo] = useState({
+        title:"",
+        body:""
+    })
+    const [close, setClose] = useState(false)
+
     const [post, setPost] = useState({
         title:"",
         body:"",
@@ -18,21 +25,46 @@ const Post = () => {
         ],
         likes:0
     })
+    const [editing ,setEditing] = useState()
 
     React.useEffect(()=>{
         fetchPostData()
-    })
+    },[index])
+
     const fetchPostData = () => {
-        // firestore.collection('post').get()
-        // .then((item)=>{
-        // })
+          firestore.collection('post').get().then((snapshot) => {
+            let myArray = []
+            snapshot.docs.forEach(doc => {
+                myArray.push(doc.data())
+            })
+            setData(myArray)
+            
+        })
     }
+
+    const findPost = () => {
+        firestore.collection('post').where('title', '==', searchData).get()
+        .then((res)=>{
+            res.forEach(doc => {
+                setInfo({
+                    title:doc.data().title,
+                    body:doc.data().body,
+                })
+               
+            })
+            setSearchField("")
+            setClose(true)
+        })
+    }
+    
+    console.log("info: ", info.title);
 
     const addPost = () => {
         if(post.title && post.body){
             firestore.collection('post').add(post)
             Alert.alert("Added Post Successfully")
             setPost({...post, title:"", body:""})
+            setIndex(index+1)
         }else{
             Alert.alert("Please input title and body")
         }
@@ -42,7 +74,8 @@ const Post = () => {
         <View
          style={{
              backgroundColor:'white',
-             flex:1
+             flex:1,
+             padding:10
          }}>
             <Header/>
             {/* <Fost/> */}
@@ -52,15 +85,16 @@ const Post = () => {
                     {/* search field */}
                     <View style={styles.search}>
                         <TextInput
-                        placeholder="Find user email:"
+                        placeholder="Search Post: "
                         style={styles.textInput}
+                        value={searchData}
                         onChangeText={(e)=>{
                             setSearchField(e)
                             
                         }
                         }
                         />
-                        <TouchableOpacity> 
+                        <TouchableOpacity onPress={findPost}> 
                             <Text>Search</Text>
                         </TouchableOpacity>
                     </View>
@@ -70,32 +104,22 @@ const Post = () => {
                         flexDirection:'row'
                     }}>
                         {adding ? <View style={styles.ewan} style={{width:170}}>
-                            <View style={styles.ewanko}>
-                                <Text>Title: </Text>
-                                <TextInput
-                                style={{
-                                    borderBottomWidth:1,
-                                    borderBottomColor:'black',
-                                    width:145,
-                                    borderRadius:5,
-                                    paddingHorizontal:5
-                                }}
-                                multiline
-                                />
-                            </View>
-                            <View style={styles.ewanko} >
-                                <Text>Body: </Text>
-                                <TextInput
-                                style={{
-                                    borderWidth:1,
-                                    borderRadius:5,
-                                    height:100,
-                                    width:145,
-                                    padding:5
-                                }}
-                                multiline
-                                />
-                            </View>
+                           
+                        {close && 
+                        <View>
+                           <View style={styles.ewanko}>
+                               <Text style={{fontSize:14, fontWeight:'bold'}}>Title: </Text>
+                               {/* dito render */}
+                               <Text>{info.title}</Text>
+                           </View>
+                           
+                           <View style={styles.ewanko} >
+                               <Text style={{fontSize:14, fontWeight:'bold'}}>Body: </Text>
+                               {/* render here */}
+                               <Text>{info.body}</Text>
+                           </View>
+                       </View>}
+                      
                         </View>:<View>
                         <View style={styles.ewanko}>
                                 <Text>Title: </Text>
@@ -129,32 +153,58 @@ const Post = () => {
                             </View>
                         </View>}
                         <View>
-                           {adding ? <View>
+                           {adding ? <View style={{position:'relative',right:-25}}>
                             <TouchableOpacity onPress={()=>setAdding(false)}>
                                 <Text style={styles.btn}>Add</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{marginTop:5}}>
-                                <Text style={styles.btn}>Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{marginTop:5}}>
-                                <Text style={styles.btn}>Delete</Text>
-                            </TouchableOpacity>
+                            {close && 
+                            <View>
+                                <TouchableOpacity style={{marginTop:5}}>
+                            <Text style={styles.btn}>Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{marginTop:5}}>
+                            <Text style={styles.btn}>Delete</Text>
+                        </TouchableOpacity>
+                        </View>
+                            }
                                </View>:
                                <View>
                                    <TouchableOpacity onPress={addPost}>
                                        <Text style={styles.btn}>Submit</Text>
+                                   </TouchableOpacity>
+                                   <TouchableOpacity onPress={()=>{
+                                       setAdding(!adding)
+                                   }} style={{marginTop:5}}>
+                                       <Text style={styles.btn}>Cancel</Text>
                                    </TouchableOpacity>
                                 </View>}
                         </View>
         
                     </View>
                 </View>
-            <FlatList
+            <Text style={{
+                backgroundColor:'#012362',
+                color:'white',
+                padding:5,
+                width:120,
+                fontSize:17,
+                fontWeight:'bold',
+                textAlign:'center',
+                borderRadius:10
+            }}>All Post</Text>
+           
+            {/* <FlatList
             data={data}
             renderItem={(item)=> {
                 return <Poste key={item.id} dataz={item}/>
             }}
-            />
+            /> */}
+            <ScrollView>
+            {data.map((item, index)=>{
+                return <Poste key={index} dataz={item}/>
+            })}
+            </ScrollView>
+           
         </View>
     )
 }
@@ -200,7 +250,7 @@ const styles = StyleSheet.create({
         paddingLeft:10
     },
     search:{
-        padding:3,
+        // padding:3,
         fontSize:15,
         fontWeight:'bold',
         flexDirection:'row',
@@ -221,6 +271,6 @@ const styles = StyleSheet.create({
     ewanko:{
         flexDirection:'row',
         marginBottom:7,
-        alignItems:'center'
+        
     }
 })
